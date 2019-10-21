@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Wahoo! </title>
+<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+<script>
+function start(){
+sjs.open();
+
+var background = new sjs.Image("Images/gif.gif");
+background.setSize(500, 500);
+
+var win_text = new sjs.Text("Wahoo!",28,"white");
+win_text.centerH();
+
+var startBtn = new sjs.Button("Redo", function(){
+window.location = "index.html";
+});
+
+startBtn.center();
+}
+</script>
+</head>
+<body onload="start()">
+<h1> Wahoo! </h1>
+
+<div id="target" style="margin:auto;background:black;"></div>
+</body>
+</html>

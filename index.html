@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Menu </title>
+<script src="https://simplycodingcourses.com/files/simplyjs/simply.js"></script>
+<script>
+function start(){
+sjs.open();
+
+var background = new sjs.Image("Images/rain down.jpg");
+background.setSize(600, 500);
+
+var menu_text = new sjs.Text("Raining Dogs and Cats", 28, "black");
+menu_text.centerH();
+
+var designBtn = new sjs.Button("Cats", function(){
+window.location = "file:///C:/Users/meeke/OneDrive/Desktop/Kayla%20Coding/Game%20Design/Custom%20Game/cutom%202.html";
+});
+designBtn.center();
+
+var level1Btn = new sjs.Button("Dogs", function(){
+window.location = "file:///C:/Users/meeke/OneDrive/Desktop/Kayla%20Coding/Game%20Design/Custom%20Game/cutom.html";
+});
+level1Btn.center().offset(0, 25);
+
+var cat1Btn = new sjs.Button("Cats - Pong Game", function(){
+window.location = "Pong cats.html";
+});
+cat1Btn.center().offset(0, 50);
+
+var dog1Btn = new sjs.Button("Dogs - Pong Game", function(){
+window.location = "Pong dogs.html";
+});
+dog1Btn.center().offset(0, 75);
+
+var gif = new sjs.Button("Gif(I made it)", function(){
+window.location = "v.s win.html";
+});
+gif.center().offset(0, 100);
+
+var info_text = new sjs.Text("Created By Kayla Meeker", 20, "black");
+info_text.bottom().centerH();
+
+}
+</script>
+</head>
+<body onload="start()">
+<h1> Menu </h1>
+
+<div id="target" style="margin:auto;background:grey;"></div>
+</body>
+</html>

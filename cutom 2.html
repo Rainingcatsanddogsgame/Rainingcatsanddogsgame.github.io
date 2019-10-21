@@ -1,0 +1,336 @@
+<html>
+<head>
+<title> Cats Win!</title>
+<script src="https://simplycodingcourses.com/files/simply.js"></script>
+<script>
+function start(){
+sjs.open("target",500,400);
+
+//Background Music
+var playM = new Audio('Music/infinite_strings.mp3');
+var toggle = true;
+var musicOn = false;
+sjs.keyDown(M_KEY, function(){
+if(toggle == true){
+if(musicOn == false){
+playM.play();
+musicOn = true;
+} else {
+playM.pause();
+musicOn = false;
+}
+toggle = false;
+setTimeout(function(){	
+toggle = true;
+},1000);
+}
+});
+
+var background = new sjs.Image("Images/cool sky.jpg");
+background.setSize(500, 10000);
+
+//Enemies
+setInterval(function(){
+var speed = Math.round(1 + Math.random()*10);	
+if(Math.random() > 0.5){
+var platform = new sjs.Image("Images/platform.png");
+platform.type = "platform";
+platform.setSize(100,50);
+platform.noBounds = true;
+platform.friction = 0;
+platform.scaleSize(.5 + Math.random() * 1.2);
+platform.moveTo(-enemy.getWidth(), Math.random()*(enemy.getClamp().y));
+} 
+},1000);
+
+//Player Properties
+var player = new sjs.Image("Images/l_cat.png");
+player.type = "player";
+player.setSize(85,93);
+player.setGravity(3);
+player.bottom();
+player.friction = .3;
+player.noBounds = true;
+player.setHFlipImages("Images/l_cat.png","Images/r_cat.png")
+
+sjs.scrollable(player,background);
+
+//Player movement controls
+
+var r_images = ["Images/r_cat.png","Images/r_catwalk.png", "Images/r_catwalk2.png"];
+
+var l_images = ["Images/l_cat.png","Images/l_catwalk.png", "Images/l_catwalk2.png"];
+
+var r_facing = true;
+var r_track = 0;
+var l_track = 0;
+
+sjs.keyDown(RIGHT_KEY, function(){
+r_facing = true;
+r_track = r_track + 1;
+player.pushRight(2);
+player.setImage(r_images[r_track]);
+if(r_track == 7){
+r_track = 0;
+}
+if(r_track >= 8){
+player.setImage("Images/r_cat.png");
+}
+}); //end Right key
+
+sjs.keyDown(LEFT_KEY, function(){
+r_facing = false;
+l_track = l_track + 1;
+player.pushLeft(2);
+player.setImage(l_images[l_track]);
+if(l_track == 7){
+l_track = 0;
+}
+if(l_track >= 8){
+player.setImage("Images/l_cat.png");
+}
+}); //end Left key
+
+//Jumping Code
+var canJump = true;
+sjs.keyDown(UP_KEY, function(){
+if(canJump == true){
+canJump = false;
+player.pushUp(55);
+if(r_facing == true){
+player.setImage("Images/r_catjump.png");
+r_track = 8;
+} else {
+player.setImage("Images/l_catjump.png");
+l_track = 8;
+}
+} //end canJump if statement
+}); //end keyDown function
+
+window.addEventListener("keyup", function(e){
+if(e.keyCode == RIGHT_KEY){
+player.setImage("Images/cat_jumpface.png");
+r_track = 0;
+} else if (e.keyCode == LEFT_KEY){
+player.setImage("Images/cat_jumpface.png");
+l_track = 0;
+} //end if statement
+}); //end EventListener function
+
+//PowerUp
+setInterval(function(){
+var x = Math.floor(Math.random() * 783);
+var y = Math.floor(Math.random() * 470);
+var powerUp = new sjs.Image("Images/cat_fish.png");
+powerUp.type = "powerUp";
+powerUp.setGravity();
+powerUp.setSize(17,30);
+powerUp.noBounds = true;
+powerUp.moveTo(x, y);
+}, 7000);
+
+
+//onHit Code BELOW!!!
+
+sjs.onHit("powerUp","bottom_screen",function(x,y){
+x.destroy();
+});
+
+sjs.onHit("player","powerUp",function(x,y){
+x.grow(60,30);
+setTimeout(function(){
+x.grow(-60,-30);
+}, 4000);
+y.destroy();
+});
+
+var canslowdown = false;
+sjs.onHit("player","powerUp", function(x,y){
+canslowdown = true;
+y.destroy();
+});
+sjs.onHit("player",["right_screen","left_screen","top_screen"],function(x,y){
+sjs.stoppedBy(x,y);
+});
+
+sjs.onHit("player","platform",function(x,y){
+sjs.stoppedBy(x,y);
+if(canJump == false && x.y < y.y-85){
+canJump = true;
+r_track = 0;
+l_track = 0;
+}
+});
+
+sjs.onHit("player","right_screen", "left_screen",function(x,y){
+sjs.stoppedBy(x,y);
+if(canJump == false){
+canJump = true;
+r_track = 0;
+l_track = 0;
+}
+});
+
+sjs.onHit("player","bottom_screen",function(x,y){
+sjs.stoppedBy(x,y);
+if(canJump == false){
+canJump = true;
+r_track = 0;
+l_track = 0;
+}
+});
+
+
+//Enemies
+setInterval(function(){
+var speed = Math.round(1 + Math.random()*10);	
+if(Math.random() > 0.5){
+var enemy = new sjs.Image("Images/r_dog.png");
+enemy.type = "enemy";
+enemy.setSize(100,50);
+enemy.noBounds = true;
+enemy.friction = 0;
+enemy.pushRight(speed);
+enemy.scaleSize(.5 + Math.random() * 1.2);
+enemy.moveTo(-enemy.getWidth(), Math.random()*(enemy.getClamp().y));
+} else{
+var enemy = new sjs.Image("Images/l_dog.png");
+enemy.type = "enemy";
+enemy.setSize(100,50);
+enemy.noBounds = true;
+enemy.friction = 0;
+enemy.pushLeft(speed);
+enemy.scaleSize(.5 + Math.random() * 1.2);
+enemy.moveTo(sjs.getWidth(), Math.random()*(enemy.getClamp().y));	
+}
+},80);
+
+sjs.left_screen.offset(-500); 
+sjs.right_screen.offset(500);
+
+sjs.onHit("enemy",["right_screen","left_screen"], function(x,y){
+x.destroy();
+});
+
+sjs.onHit("player","enemy", function(x,y){
+if(x.getWidth() > y.getWidth() && x.getHeight() > y.getHeight()) {
+score = score + 1;
+score_txt.setText("Score: "+score);
+localStorage.setItem("score", score);
+if(score >= 50){
+window.location = "win.html";
+}
+x.grow(10,5);
+} else {
+x.destroy();
+window.location = "gameover.html";
+}
+y.destroy();
+});
+
+sjs.keyDown(DOWN_KEY, function(){
+if(slowdown == true){
+slowdown = false;
+var slowdown = new sjs.Image("Images/cat_parachute.png");
+slowdown.type = "slowdown";
+slowdown.setSize(100,50);
+slowdown.friction= 0;
+slowdown.noBounds= true;
+if(r_facing == true){
+slowdown.moveTo(player.getX()+44,player.getY()+7);
+slowdown.pushRight(25.5);
+} else {
+slowdownt.moveTo(player.getX()+-60,player.getY()+7);
+slowdown.pushLeft(25.5);
+}
+setTimeout(function(){
+canslowdown = true;
+},100);
+} //end canShoot if statement
+}); //end keyDown function DOWN_KEY
+
+
+var canslowdown = false;
+sjs.onHit("player","powerUp", function(x,y){
+canShoot = true;
+y.destroy();
+});
+sjs.onHit("player",["right_screen","left_screen","bottom_screen"],function(x,y){
+sjs.stoppedBy(x,y);
+});
+
+var score = 0;
+var score_txt = new sjs.Text("Score: 0", 21, "white");
+score_txt.right().offset(-20, 0);
+score_txt.fixed = true;
+sjs.onHit("player","score", function(x,y){
+score = score + 1;
+score_txt.setText("Score :"+ score);
+localStorage.setItem("score", score);
+y.destroy();
+});
+
+var flagOn = true;
+sjs.onHit("player","flag", function(x,y){
+x.stop();
+if(flagOn == true){
+flagOn = false;
+setTimeout(function(){
+y.setImage("Images/dog_flag.png");
+},800 );
+setTimeout(function(){
+y.setImage("Images/dog_flag2.png");
+},1600 );
+setTimeout(function(){
+y.setImage("Images/dog_flag3.png");
+window.location = "index.html";
+},2400 );
+} //end if statement
+});
+} //end start
+
+
+//Platform Function
+function platform(){
+var platform = new sjs.Image("Images/dog_platform.png");
+level.push(platform);
+platform.type = "platform";
+platform.setHeight(30);
+platform.center().offset(-sjs.gx,10);
+}
+
+function powerUp(){
+var powerUp = new sjs.Image("Images/cat_fish.png");
+level.push(powerUp);
+powerUp.type = "powerUp";
+powerUp.setHeight(30);
+powerUp.center().offset(-sjs.gx,10);
+}
+
+function flag(){
+var flag = new sjs.Image("Images/dog_flag.png");
+level.push(flag);
+flag.type = "flag";
+flag.setHeight(80);
+flag.bottom();
+}
+
+function enemy(){
+var enemy = new sjs.Image("Images/r_dog.gif");
+level.push(enemy);
+enemy.type = "enemy";
+enemy.center().offset(-sjs.gx,10);
+enemy.friction = 0;
+enemy.noBounds = true;
+enemy.setHFlipImages("Images/l_dog.gif","Images/r_dog.gif");
+}
+
+
+</script>
+</head>
+<body onload="start()">
+<h1> Cats Win! </h1>
+
+<div id="target" style="margin:auto;background:grey;"></div>
+</body>
+</html>
